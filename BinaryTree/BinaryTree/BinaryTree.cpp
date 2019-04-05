@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <stack>
 using namespace std;
 
 class BSTNode {
@@ -24,9 +25,12 @@ private:
 	BSTNode *root; //根节点
 
 	/*----------内部接口（传入的节点参数均为根节点）---------*/
+
+
 	//先序遍历
+	/*----递归实现-----*/
 	vector<double> PreTraverse(BSTNode *x) {
-		vector<double> pre_vector;
+		vector<double> pre_vector; ///存储遍历后的数组
 		if (x != NULL) {
 			pre_vector.push_back(x->key);
 			//cout<< x->key << " ";
@@ -36,11 +40,31 @@ private:
 		return pre_vector;
 	}
 
+	/*----迭代实现（利用堆栈结构）-----*/
+	vector<double> IterPreTraverse(BSTNode *x) {
+		vector<double> pre_vector;
+		stack<BSTNode*> stk;
+		stk.push(x);             //先将根入栈
+	    
+		while (!stk.empty()) {
+			BSTNode *tmp = NULL;
+			tmp = stk.top();    //C++中的pop返回void，因此需要使用top取元素
+			stk.pop();
+			pre_vector.push_back(tmp->key);
+
+			if (tmp->rchild != NULL)
+				stk.push(tmp->rchild);
+			if (tmp->lchild != NULL)
+				stk.push(tmp->lchild);
+		}
+		return pre_vector;
+	}
+
 	//中序遍历
+	/*----递归实现-----*/
 	vector<double> InTraverse(BSTNode *x) {
 		vector<double> in_vector;
 		if (x != NULL) {
-			
 			InTraverse(x->parent);
 			in_vector.push_back(x->key);
 			//cout<< x->key << " ";
@@ -48,7 +72,28 @@ private:
 		}
 	}
 
+	/*----迭代实现（先将根节点和其所有子节点压入栈，再逐个处理右子树）-----*/
+	vector<double> IterInTraverse(BSTNode *x) {
+		vector<double> in_vector;
+		stack<BSTNode*> stk;
+		BSTNode *root = x;
+
+		do {
+			while (root != NULL) {
+				stk.push(root);
+				root = root->lchild;
+			}
+			if (!stk.empty()) {
+				BSTNode *tmp = NULL;
+				tmp = stk.top();
+				in_vector.push_back(tmp->key);
+				root = root->rchild;
+			}
+		} while (!stk.empty() || root != NULL);  //当读到根节点时stk栈为空，但需要继续读取右子树，因此添加root非空的循环条件
+	}
+
     //后序遍历
+	/*----递归实现-----*/
 	vector<double> PostTraverse(BSTNode *x) {
 		vector<double> post_vector;
 		if (x != NULL) {
@@ -60,6 +105,7 @@ private:
 	}
 
 	//查找键k，不存在则返回NTL
+	/*----递归实现-----*/
 	BSTNode* SearchKey(BSTNode *x, double k) {
 		if (x == NULL || k == x->key)
 			return x;
@@ -68,6 +114,18 @@ private:
 		else  return SearchKey(x->rchild, k);
 
 	}
+
+	/*---迭代实现-----*/
+	BSTNode* IterSearchKey(BSTNode *x, double k) {
+		while (x != NULL && x->key != k) {
+			if (x->key > k)
+				x = x->lchild;
+			else
+				x = x->rchild;
+		}
+		return x;
+	}
+
 
 	//查找以x为根节点的子树的最小key
 	BSTNode* SearchMin(BSTNode *x) {
@@ -180,5 +238,6 @@ private:
 	}
 
 
+	
 
 };
