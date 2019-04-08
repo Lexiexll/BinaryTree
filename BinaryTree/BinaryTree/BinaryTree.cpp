@@ -263,12 +263,12 @@ private:
 	}
 
 
-	/*----------外部接口（传入的节点参数均为根节点）---------*/
+	/*----------------------外部接口------------------------*/
 public:
 	BSTree() :root(NULL){}
 
 	//遍历
-	void preTraverse() {
+	vector<double> preTraverse() {
 		IterPreTraverse(root);
 	}
 	void inTraverse() {
@@ -277,4 +277,37 @@ public:
 	void postTraverse() {
 		IterPostTraverse(root);
 	}
+
+	//查找
+	BSTNode* searchKey(double key) {
+		return SearchKey(root, key);
+	}
+	BSTNode* searchMin(BSTNode *x) {
+		return SearchMin(x);
+	}
+	BSTNode* searchMax(BSTNode *x) {
+		return SearchMax(x);
+	}
+
+	//前驱和后继节点
+	BSTNode* searchSucessor(BSTNode *x) {
+		return SearchSuccessor(x);
+	}
+	BSTNode* searchpreSuccessor(BSTNode *x) {
+		return SearchPreSuccessor(x);
+	}
+
+	//插入和删除
+	void inserNode(double key) {
+		BSTNode *n = new BSTNode(key, NULL, NULL, NULL);
+		if (n == NULL)
+			return;
+		InserNode(root, n);
+	}
+	void deleteNode(double key) {
+		BSTNode *n = IterSearchKey(root, key);
+		if (n != NULL)
+			DeleteNode(root, n);
+	}
+
 };
